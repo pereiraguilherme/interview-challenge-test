@@ -1,0 +1,85 @@
+.tabs-container {
+  width: 100%;
+}
+
+.tabs-list {
+  display: flex;
+  margin-bottom: 32px;
+  gap: 12px;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.tab {
+  padding: 16px 32px;
+  font-size: 18px;
+  font-weight: 600;
+  background: rgba(255, 255, 255, 0.9);
+  border: none;
+  cursor: pointer;
+  color: #0070d2;
+  transition: all 0.3s ease;
+  outline: none;
+  border-radius: 50px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+  backdrop-filter: blur(10px);
+  position: relative;
+  overflow: hidden;
+}
+
+.tab::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 0;
+  height: 0;
+  border-radius: 50%;
+  background: rgba(255, 185, 0, 0.2);
+  transform: translate(-50%, -50%);
+  transition: width 0.6s, height 0.6s;
+}
+
+.tab:hover::before {
+  width: 300px;
+  height: 300px;
+}
+
+.tab:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 8px 25px rgba(255, 185, 0, 0.3);
+  border: 2px solid #ffb900;
+}
+
+.tab.active {
+  background: linear-gradient(135deg, #ffb900 0%, #ff9d00 100%);
+  color: #003f7f;
+  transform: translateY(-4px) scale(1.05);
+  box-shadow: 0 10px 30px rgba(255, 185, 0, 0.5);
+  border: 2px solid #ff9d00;
+}
+
+.tab.active:hover {
+  transform: translateY(-4px) scale(1.05);
+}
+
+.tab-content {
+  min-height: 400px;
+  background: rgba(255, 255, 255, 0.95);
+  padding: 40px;
+  border-radius: 30px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+  backdrop-filter: blur(10px);
+  animation: fadeIn 0.4s ease;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
