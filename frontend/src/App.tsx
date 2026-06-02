@@ -1,18 +1,19 @@
-import React, { useEffect, useState } from 'react';
-import { Country } from './types/Country';
-import { api } from './services/api';
-import CountryCard from './components/CountryCard';
-import StatsPlaceholder from './components/StatsPlaceholder';
-import RegionAnalysisPlaceholder from './components/RegionAnalysisPlaceholder';
-import Tabs from './components/Tabs';
-import './App.css';
+import React, { useEffect, useState } from "react";
+import { Country } from "./types/Country";
+import { api } from "./services/api";
+import CountryCard from "./components/CountryCard";
+import GlobalStats from "./components/GlobalStats";
+import LanguagePlaceholder from "./components/LanguagePlaceholder";
+import RegionAnalysisPlaceholder from "./components/RegionAnalysisPlaceholder";
+import Tabs from "./components/Tabs";
+import "./App.css";
 
 const App: React.FC = () => {
   const [countries, setCountries] = useState<Country[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [searchTerm, setSearchTerm] = useState('');
-  const [selectedRegion, setSelectedRegion] = useState('all');
+  const [searchTerm, setSearchTerm] = useState("");
+  const [selectedRegion, setSelectedRegion] = useState("all");
 
   useEffect(() => {
     loadCountries();
@@ -25,7 +26,7 @@ const App: React.FC = () => {
       const data = await api.getAllCountries();
       setCountries(data);
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to load countries');
+      setError(err instanceof Error ? err.message : "Failed to load countries");
     } finally {
       setLoading(false);
     }
@@ -36,7 +37,7 @@ const App: React.FC = () => {
       .toLowerCase()
       .includes(searchTerm.toLowerCase());
     const matchesRegion =
-      selectedRegion === 'all' || country.region === selectedRegion;
+      selectedRegion === "all" || country.region === selectedRegion;
     return matchesSearch && matchesRegion;
   });
 
@@ -52,13 +53,22 @@ const App: React.FC = () => {
             fill="none"
             xmlns="http://www.w3.org/2000/svg"
           >
-            <circle cx="12" cy="12" r="10" stroke="url(#gradient)" strokeWidth="2"/>
-            <path d="M2 12h20M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"
-              stroke="url(#gradient)" strokeWidth="2"/>
+            <circle
+              cx="12"
+              cy="12"
+              r="10"
+              stroke="url(#gradient)"
+              strokeWidth="2"
+            />
+            <path
+              d="M2 12h20M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"
+              stroke="url(#gradient)"
+              strokeWidth="2"
+            />
             <defs>
               <linearGradient id="gradient" x1="0%" y1="0%" x2="100%" y2="100%">
-                <stop offset="0%" stopColor="#0070d2"/>
-                <stop offset="100%" stopColor="#003f7f"/>
+                <stop offset="0%" stopColor="#0070d2" />
+                <stop offset="100%" stopColor="#003f7f" />
               </linearGradient>
             </defs>
           </svg>
@@ -112,7 +122,8 @@ const App: React.FC = () => {
             {!loading && !error && (
               <>
                 <div className="app-result-count">
-                  Showing {filteredCountries.length} of {countries.length} countries
+                  Showing {filteredCountries.length} of {countries.length}{" "}
+                  countries
                 </div>
                 <div className="app-grid">
                   {filteredCountries.map((country) => (
@@ -124,7 +135,11 @@ const App: React.FC = () => {
           </Tabs.Panel>
 
           <Tabs.Panel label="📊 Global Statistics">
-            <StatsPlaceholder />
+            <GlobalStats />
+          </Tabs.Panel>
+
+          <Tabs.Panel label="🗣️ Languages">
+            <LanguagePlaceholder />
           </Tabs.Panel>
 
           <Tabs.Panel label="🌍 Region Analysis">

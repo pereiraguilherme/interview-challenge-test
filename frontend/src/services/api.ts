@@ -51,6 +51,15 @@ export const api = {
     return response.json();
   },
 
+  // Language filtering endpoint - implemented in backend
+  async getCountriesByLanguage(language: string): Promise<Country[]> {
+    const response = await fetch(`${API_BASE_URL}/countries/language/${language}`);
+    if (!response.ok) {
+      throw new Error(`Failed to fetch countries by language: ${language}`);
+    }
+    return response.json();
+  },
+
   // TODO: Implement this endpoint in the backend
   async getCountryStats(): Promise<CountryStats> {
     const response = await fetch(`${API_BASE_URL}/stats`);

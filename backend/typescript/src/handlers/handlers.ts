@@ -28,52 +28,49 @@ export const getAllCountriesHandler = async (req: Request, res: Response) => {
 };
 
 // TODO: CANDIDATE MUST IMPLEMENT
-// Get a single country by its ISO 3166-1 alpha-3 code
-// Endpoint: GET /api/countries/:code
-// Example: /api/countries/USA should return data for United States
-// Use the REST Countries API: https://restcountries.com/v3.1/alpha/{code}
-export const getCountryByCodeHandler = async (req: Request, res: Response) => {
-  // IMPLEMENT ME
-  // 1. Extract the country code from req.params.code
-  // 2. Make a request to RESTCOUNTRIES_API + "/alpha/" + code + FIELDS_PARAM
-  // 3. Handle errors appropriately
-  // 4. Return the country data as JSON
-
-  res.status(501).json({ error: 'Not implemented' });
-};
-
-// TODO: CANDIDATE MUST IMPLEMENT
-// Get all countries in a specific region
-// Endpoint: GET /api/countries/region/:region
-// Example: /api/countries/region/Europe
-// Use the REST Countries API: https://restcountries.com/v3.1/region/{region}
-export const getCountriesByRegionHandler = async (req: Request, res: Response) => {
-  // IMPLEMENT ME
-  // 1. Extract the region from req.params.region
-  // 2. Make a request to RESTCOUNTRIES_API + "/region/" + region + FIELDS_PARAM
-  // 3. Handle errors appropriately
-  // 4. Return the countries data as JSON
-
-  res.status(501).json({ error: 'Not implemented' });
-};
-
-// TODO: CANDIDATE MUST IMPLEMENT
 // Calculate and return global statistics
 // Endpoint: GET /api/stats
 // Should return: total countries, total population, largest country by area, most populous country
 // Hint: Fetch all countries first, then calculate statistics
 export const getStatsHandler = async (req: Request, res: Response) => {
-  // IMPLEMENT ME
-  // 1. Fetch all countries from RESTCOUNTRIES_API + "/all" + FIELDS_PARAM
-  // 2. Parse the response into Country[]
-  // 3. Calculate:
-  //    - Total number of countries
-  //    - Sum of all populations
-  //    - Country with largest area
-  //    - Country with highest population
-  // 4. Return as CountryStats JSON
-
   res.status(501).json({ error: 'Not implemented' });
+};
+
+// Get countries filtered by language
+// Endpoint: GET /api/countries/language/:lang
+// Example: /api/countries/language/spanish or /api/countries/language/all
+// Use the REST Countries API: https://restcountries.com/v3.1/lang/{lang} or /all for all countries
+export const getCountriesByLanguageHandler = async (req: Request, res: Response) => {
+  try {
+    const lang = req.params.lang;
+
+    if (!lang) {
+      return res.status(400).json({ error: 'Language parameter is required' });
+    }
+
+    let url: string;
+    if (lang.toLowerCase() === 'all') {
+      url = `${RESTCOUNTRIES_API}/all${FIELDS_PARAM}`;
+    } else {
+      url = `${RESTCOUNTRIES_API}/lang/${lang}${FIELDS_PARAM}`;
+    }
+
+    const response = await fetch(url);
+
+    if (response.status === 404) {
+      return res.status(404).json({ error: 'Language not found' });
+    }
+
+    if (!response.ok) {
+      throw new Error('Failed to fetch countries');
+    }
+
+    const data = await response.json();
+    res.json(data);
+  } catch (error) {
+    console.error('Error fetching countries by language:', error);
+    res.status(500).json({ error: 'Failed to fetch countries' });
+  }
 };
 
 // TODO: CANDIDATE MUST IMPLEMENT
@@ -81,15 +78,5 @@ export const getStatsHandler = async (req: Request, res: Response) => {
 // Endpoint: GET /api/regions/analysis
 // Should return an array of RegionData with count, population, and country names per region
 export const getRegionAnalysisHandler = async (req: Request, res: Response) => {
-  // IMPLEMENT ME
-  // 1. Fetch all countries from RESTCOUNTRIES_API + "/all" + FIELDS_PARAM
-  // 2. Parse the response into Country[]
-  // 3. Group countries by region using a map
-  // 4. For each region, calculate:
-  //    - Count of countries
-  //    - Total population
-  //    - List of country names
-  // 5. Return as RegionData[] JSON
-
   res.status(501).json({ error: 'Not implemented' });
 };

@@ -118,9 +118,9 @@ during the interview (documentation, Stack Overflow, etc.).
 
 ---
 
-### Phase 2: Backend Challenge - Implement Core Endpoints (30-40 minutes)
+### Phase 2: Backend Challenge - Implement Core Endpoints (35-50 minutes)
 
-The candidate should implement endpoints in order of increasing complexity. Let them choose the order, but suggest this sequence if they're unsure.
+The candidate should implement endpoints in order of increasing complexity. Let them choose the order, but suggest this sequence if they're unsure. Note: Challenge 3.5 (Language Statistics) is a new challenge - adjust time allocation based on interview goals.
 
 #### Challenge 1: Get Country by Code (15 minutes)
 **Endpoint**: `GET /api/countries/{code}`
@@ -181,20 +181,26 @@ curl http://localhost:3001/api/countries/region/Europe
 
 ---
 
-#### Challenge 3: Calculate Global Statistics (15 minutes)
-**Endpoint**: `GET /api/stats`
+#### Challenge 3: Calculate Global Statistics with Region Filtering (15-20 minutes)
+**Endpoint**: `GET /api/stats?region={region}` (optional query parameter)
 
 **Requirements:**
-- Fetch all countries from REST Countries API
+- Fetch countries from REST Countries API
+  - If `region` query parameter is provided: fetch from `/region/{region}`
+  - If no `region` parameter: fetch all countries from `/all`
 - Calculate and return:
-  - Total number of countries
-  - Total global population
+  - Total number of countries (in the region or globally)
+  - Total population (in the region or globally)
   - Largest country by area (name + area)
   - Most populous country (name + population)
+  - Region name (if filtered by region, otherwise "Global")
 
 **Expected Response Format:**
+
+*Without region parameter (global stats):*
 ```json
 {
+  "scope": "Global",
   "totalCountries": 250,
   "totalPopulation": 7900000000,
   "largestCountry": {
@@ -208,23 +214,93 @@ curl http://localhost:3001/api/countries/region/Europe
 }
 ```
 
+*With region parameter (e.g., `?region=Europe`):*
+```json
+{
+  "scope": "Europe",
+  "totalCountries": 53,
+  "totalPopulation": 747636026,
+  "largestCountry": {
+    "name": "Russia",
+    "area": 17098242
+  },
+  "mostPopulous": {
+    "name": "Russia",
+    "population": 144104080
+  }
+}
+```
+
 **Success Criteria:**
-- Correctly aggregates data from all countries
-- Handles missing data (some countries lack area/population)
-- Returns proper JSON structure
+```bash
+# Global statistics
+curl http://localhost:3001/api/stats
+
+# Regional statistics
+curl "http://localhost:3001/api/stats?region=Europe"
+curl "http://localhost:3001/api/stats?region=Asia"
+curl "http://localhost:3001/api/stats?region=Africa"
+```
 
 **Evaluation Points:**
-- [ ] Fetches all countries efficiently
-- [ ] Correctly calculates totals
+- [ ] Correctly extracts optional query parameter
+- [ ] Fetches appropriate data based on parameter presence
+- [ ] Correctly calculates totals for both global and regional scopes
 - [ ] Finds maximum values properly
-- [ ] Handles edge cases (null/undefined values)
+- [ ] Handles edge cases (null/undefined values, invalid regions)
 - [ ] Code is readable and well-structured
 - [ ] Uses appropriate data structures
+- [ ] Returns proper `scope` field to indicate context
 
 **Discussion Questions:**
 - "How would you optimize this if the API was slow?"
 - "What if some countries have missing population/area data?"
-- "How would you add more statistics?"
+- "How would you handle case-insensitive region names?"
+- "Should the API return an error for invalid regions or empty results?"
+- "How could you extend this to support multiple filters (e.g., region + subregion)?"
+
+---
+
+#### Challenge 3.5: Get Countries by Language (10-15 minutes)
+**Endpoint**: `GET /api/countries/language/{lang}`
+
+**Requirements:**
+- Accept a language name as a URL parameter (e.g., "spanish", "english", "french")
+- Accept "all" as a special parameter to return all countries
+- Fetch countries from REST Countries API:
+  - If language is "all": fetch from `/all`
+  - Otherwise: fetch from `/lang/{language}`
+- Return array of countries
+- Handle invalid languages
+
+**Success Criteria:**
+```bash
+# Get Spanish-speaking countries
+curl http://localhost:3001/api/countries/language/spanish
+
+# Get English-speaking countries
+curl http://localhost:3001/api/countries/language/english
+
+# Get all countries
+curl http://localhost:3001/api/countries/language/all
+
+# Should handle invalid language
+curl http://localhost:3001/api/countries/language/invalidlang
+```
+
+**Evaluation Points:**
+- [ ] Correctly extracts language parameter from URL
+- [ ] Handles the special "all" case
+- [ ] Makes appropriate API request based on parameter
+- [ ] Returns proper array of countries
+- [ ] Handles errors for invalid languages
+- [ ] Consistent with existing code patterns
+
+**Discussion Questions:**
+- "How would you handle different language name formats (Spanish vs spanish)?"
+- "What if a country has multiple languages - how does the API filter them?"
+- "How would you add support for filtering by multiple languages?"
+- "Should we cache language-filtered results differently than region results?"
 
 ---
 
@@ -265,44 +341,111 @@ curl http://localhost:3001/api/countries/region/Europe
 
 ### Phase 3: Frontend Integration (15-20 minutes)
 
-Once at least one endpoint is working, move to frontend integration.
+Once at least one endpoint is working, move to frontend integration. The application has four tabs:
+1. **Search Countries** (working)
+2. **Global Statistics** (requires `/api/stats`)
+3. **Language Statistics** (requires `/api/countries/language/{lang}`) - NEW
+4. **Region Analysis** (requires `/api/regions/analysis`)
 
-#### Challenge 5: Implement Statistics Component
+Choose which component to implement based on completed endpoints and time remaining.
+
+#### Challenge 5: Implement Statistics Component with Region Filtering
 
 **Task**: Replace `StatsPlaceholder` with a working component that fetches and displays data from `/api/stats`.
 
 **Requirements:**
-- Create a new component `Statistics.tsx`
+- Create a new component `Statistics.tsx` or enhance `GlobalStats.tsx` if already exists
 - Fetch data from `/api/stats` endpoint
-- Display all four statistics in a visually appealing way
+- Add a region filter dropdown to allow users to view global or regional statistics
+  - Options: "Global", "Africa", "Americas", "Asia", "Europe", "Oceania"
+  - Default to "Global"
+  - When region is selected, pass `?region={region}` parameter
+- Display all statistics in a visually appealing way:
+  - Scope (Global or Region name)
+  - Total number of countries
+  - Total population (formatted with commas or abbreviations)
+  - Largest country by area
+  - Most populous country
 - Handle loading state
 - Handle error state
 - Update `App.tsx` to use the new component
 
 **Success Criteria:**
-- Statistics load when page loads
-- Data displays correctly formatted
+- Statistics load when page loads (showing global by default)
+- Region dropdown allows switching between global and regional stats
+- Data updates when region selection changes
+- Data displays correctly formatted (numbers with commas/abbreviations)
 - Loading spinner shows during fetch
 - Errors display user-friendly messages
 - Component matches the visual style of existing components
 
 **Evaluation Points:**
 - [ ] Correctly uses React hooks (useState, useEffect)
-- [ ] Properly calls the API service
+- [ ] Properly calls the API service with/without query parameters
+- [ ] Re-fetches data when region selection changes
 - [ ] Handles async operations
 - [ ] Good error handling
 - [ ] Clean component structure
 - [ ] Reasonable styling
-- [ ] Accessible and user-friendly
+- [ ] Accessible and user-friendly (labeled dropdowns, semantic HTML)
 
 **Code Review Questions:**
 - "Why did you choose this state management approach?"
-- "How would you avoid unnecessary re-renders?"
+- "How would you avoid unnecessary re-renders when changing regions?"
 - "What accessibility considerations did you make?"
+- "How did you handle the query parameter in the API call?"
 
 ---
 
-#### Challenge 6: Add Click-through Detail View (BONUS)
+#### Challenge 6: Implement Language Statistics Component
+
+**Task**: Create a component that fetches and displays countries filtered by language from `/api/countries/language/{lang}`.
+
+**Requirements:**
+- Create a new component `LanguageStats.tsx` or replace the placeholder
+- Add a language selector dropdown with popular languages:
+  - Options: "All", "English", "Spanish", "French", "Arabic", "Chinese", "Portuguese", "Russian"
+  - Default to "All"
+  - Map display names to API parameters (e.g., "All" → "all", "English" → "english")
+- Fetch data from `/api/countries/language/{lang}` endpoint
+- Display results in a visually appealing way:
+  - Total count of countries for selected language
+  - Grid or list of country cards
+  - Country flags, names, capitals, and regions
+- Handle loading state
+- Handle error state (e.g., invalid language)
+- Update `App.tsx` to include the new tab between Global Statistics and Region Analysis
+
+**Success Criteria:**
+- Component loads with "All" selected by default, showing all countries
+- Language dropdown allows switching between different languages
+- Data updates when language selection changes
+- Country count updates correctly
+- Loading spinner shows during fetch
+- Errors display user-friendly messages
+- Component matches the visual style of existing components
+- Countries display in an organized, readable format
+
+**Evaluation Points:**
+- [ ] Correctly uses React hooks (useState, useEffect)
+- [ ] Properly maps language selection to API parameters
+- [ ] Re-fetches data when language selection changes
+- [ ] Handles async operations
+- [ ] Good error handling
+- [ ] Clean component structure
+- [ ] Reasonable styling and layout
+- [ ] Accessible (labeled dropdowns, semantic HTML)
+- [ ] Displays count/statistics clearly
+
+**Code Review Questions:**
+- "How did you decide to structure the language mapping?"
+- "Why did you choose this layout for displaying multiple countries?"
+- "How would you handle a language that returns hundreds of countries?"
+- "What accessibility features did you include?"
+
+---
+
+#### Challenge 7: Add Click-through Detail View (BONUS)
 
 **Task**: When a country card is clicked, show detailed information using the `/api/countries/{code}` endpoint.
 

@@ -41,5 +41,5 @@ echo "🔨 Building with $BACKEND_LANG backend..."
 export BACKEND_LANG=$BACKEND_LANG
 
 docker-compose down
-docker-compose build
+docker-compose build --no-cache
 docker-compose up

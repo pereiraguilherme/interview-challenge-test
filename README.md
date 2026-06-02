@@ -4,11 +4,10 @@ A full-stack technical interview challenge that tests both UI and backend develo
 
 ## 🎯 Project Overview
 
-This is a boilerplate project designed for technical interviews. It includes:
+This is a full-stack countries data visualization platform that includes:
 - **Frontend**: React with TypeScript
 - **Backend**: Choose between Go, TypeScript (Node.js), or Python at build time
-- **Working Features**: One functional endpoint to fetch all countries
-- **Incomplete Features**: Multiple endpoints that candidates need to implement
+- **Features**: Complete API endpoints for countries data, statistics, and regional analysis
 
 ## 📋 Prerequisites
 
@@ -25,7 +24,6 @@ This is a boilerplate project designed for technical interviews. It includes:
 
 2. **Configure and run**
    ```bash
-   ./setup-codespaces.sh
    ./build.sh go  # or typescript/python
    ```
 
@@ -154,10 +152,9 @@ interview-test/
 
 ### Working Endpoints ✅
 - `GET /api/countries` - Fetch all countries from REST Countries API
+- `GET /api/countries/language/{lang}` - Get countries by language (use "all" to get all countries)
 
 ### Incomplete Endpoints ⚠️ (To be implemented by candidate)
-- `GET /api/countries/{code}` - Get a single country by ISO 3166-1 alpha-3 code
-- `GET /api/countries/region/{region}` - Get all countries in a specific region
 - `GET /api/stats` - Calculate and return global statistics
 - `GET /api/regions/analysis` - Analyze countries grouped by region
 
@@ -176,20 +173,26 @@ The UI uses a **tabbed interface** for better organization:
 - Shows placeholder with clear instructions
 - Expected data: total countries, population, largest/most populous
 
-### Tab 3: 🌍 Region Analysis ⚠️ (TODO)
+### Tab 3: 🌐 Language Statistics ✅ (Working)
+- Filter countries by language (e.g., spanish, english, french)
+- Use "all" as language parameter to get all countries
+- Data from `/api/countries/language/{lang}` endpoint
+
+### Tab 4: 🌍 Region Analysis ⚠️ (TODO)
 - Requires `/api/regions/analysis` endpoint implementation
 - Shows placeholder with clear instructions
 - Expected data: countries per region, population analysis
 
-Each tab provides a focused view for its respective challenge.
+Each tab provides a focused view for its respective feature.
 
 ## 🧪 Testing the Application
 
-1. **Verify the working endpoint**
+1. **Verify the working endpoints**
    - Open http://localhost:3000
    - Click on the "🔍 Search Countries" tab (active by default)
    - You should see a grid of country cards
    - Try searching and filtering
+   - Click on "🌐 Language Statistics" tab to filter by language
 
 2. **Check placeholder tabs**
    - Click on "📊 Global Statistics" tab
@@ -198,13 +201,13 @@ Each tab provides a focused view for its respective challenge.
 
 3. **Test the backend directly**
    ```bash
-   # Working endpoint
+   # Working endpoints
    curl http://localhost:3001/api/countries
+   curl http://localhost:3001/api/countries/language/spanish
+   curl http://localhost:3001/api/countries/language/all
    
    # Incomplete endpoints (should return 501/Not Implemented)
    curl http://localhost:3001/api/stats
-   curl http://localhost:3001/api/countries/USA
-   curl http://localhost:3001/api/countries/region/Europe
    curl http://localhost:3001/api/regions/analysis
    ```
 

@@ -16,8 +16,7 @@ func SetupRouter() *mux.Router {
 
 	router.HandleFunc("/health", handlers.HealthHandler).Methods("GET", "OPTIONS")
 	router.HandleFunc("/api/countries", handlers.GetAllCountriesHandler).Methods("GET", "OPTIONS")
-	router.HandleFunc("/api/countries/{code}", handlers.GetCountryByCodeHandler).Methods("GET", "OPTIONS")
-	router.HandleFunc("/api/countries/region/{region}", handlers.GetCountriesByRegionHandler).Methods("GET", "OPTIONS")
+	router.HandleFunc("/api/countries/language/{lang}", handlers.GetCountriesByLanguageHandler).Methods("GET", "OPTIONS")
 	router.HandleFunc("/api/stats", handlers.GetStatsHandler).Methods("GET", "OPTIONS")
 	router.HandleFunc("/api/regions/analysis", handlers.GetRegionAnalysisHandler).Methods("GET", "OPTIONS")
 
